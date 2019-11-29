@@ -19,6 +19,9 @@ class Cards
   end
 
   def take(symbol, number)
+    @deck[symbol].delete(number)
+    @cards.delete(symbol => number)
+    Cards.new(@deck, @cards)
   end
 
   def to_a
@@ -41,7 +44,3 @@ class Cards
     }
   end
 end
-
-cards = Cards.new
-p cards.draw(3)
-p cards.shuffle
