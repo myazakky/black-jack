@@ -56,3 +56,14 @@ class Card
     }
   end
 end
+
+class BlackJack
+  def initialize
+    @card = Card.new
+    @player = Card.new({}, [])
+    @dealer = Card.new({}, [])
+  end
+
+  def run
+  end
+end
