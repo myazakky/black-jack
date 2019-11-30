@@ -54,7 +54,45 @@ class Cards
   end
 end
 
-cards = Cards.new
-p cards.add(Cards.new(spade: [13]))
-p cards.draw(3)
-p cards
+class BlackJack
+  def initialize
+    @player = Cards.new({})
+    @dealer = Cards.new({})
+    @cards = Cards.new
+  end
+
+  def run
+    while total(@player) < 21
+      drawn_cards = @cards.draw(1)
+      @player.add(drawn_cards)
+
+      p total(@player)
+      print 'Y/n'
+      break if readline == 'Y'
+    end
+  end
+
+  private
+
+  def total(cards)
+    total_number = 0
+    cards.deck_to_a.each do |card|
+      _, number = card.to_a.flatten
+      total_number += to_black_jack_number(number)
+    end
+
+    total_number
+  end
+
+  def to_black_jack_number(number)
+    case number
+    when 11 then 10
+    when 12 then 10
+    when 13 then 10
+    else number
+    end
+  end
+end
+
+game = BlackJack.new
+game.run
