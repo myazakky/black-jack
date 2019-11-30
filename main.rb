@@ -1,61 +1,58 @@
-class Cards
-  def initialize(arg_deck = nil, arg_cards = nil)
-    @deck = arg_deck.nil? ? deck : arg_deck
-    @cards = arg_cards.nil? ? to_a : arg_cards
+# frozen_string_literal: true
+
+class Card
+  def initialize(deck = nil, cards_array = nil)
+    @deck = deck.nil? ? new_deck : deck
+    @cards_array = cards_array.nil? ? deck_to_a : cards_array
   end
 
-  def shuffle
-    @cards.shuffle!
-    Cards.new(@deck, @cards)
+  def shuffle!
+    Card.new(@deck, @cards_array.shuffle!)
   end
 
   def draw(any_number)
-    @cards[0, any_number].each do |card|
-      symbol, value = card.to_a.flatten!
-      @deck[symbol].delete(value)
+    drawed_card = Card.new({}, [])
+    @cards_array[0, any_number].each do |card|
+      drawed_card.add(card)
+
+      symbol, number = card.to_a.flatten!
+      @deck[symbol].delete(number)
     end
-    @cards.slice!(0, any_number)
-    Cards.new(@deck, @cards)
+    @cards_array.slice!(0, any_number)
+
+    drawed_card
   end
 
-  def take(symbol, number)
-    @deck[symbol].delete(number)
-    @cards.delete(symbol => number)
-    Cards.new(@deck, @cards)
-  end
+  def add(card)
+    @cards_array.append(card)
 
-  def add(symbol, number)
-    @deck[symbol].append(number)
-    @cards.append(symbol => number)
-  end
-
-  def to_a
-    cards = []
-    @deck.each do |symbol, numbers|
-      numbers.each { |num| cards.append(symbol => num) }
+    symbol, number = card.to_a.flatten!
+    if @deck[symbol].nil?
+      @deck[symbol] = [number]
+    else
+      @deck[symbol].append(number)
     end
-    cards
+
+    Card.new(@deck, @cards_array)
+  end
+
+  def deck_to_a
+    cards_array = []
+    @deck.each do |symbol, number_array|
+      number_array.each { |number| cards_array.append(symbol => number) }
+    end
+    cards_array
   end
 
   private
 
-  def deck
+  def new_deck
     {
       spade: (1..13).to_a,
-      club: (1..13).to_a,
       diamond: (1..13).to_a,
       heart: (1..13).to_a,
+      club: (1..13).to_a,
       joker: [0, 0]
     }
-  end
-end
-
-class Player
-  def initialize
-    @hand = Cards.new
-  end
-
-  def add(symbol, number)
-    @hand.add(symbol, number)
   end
 end
