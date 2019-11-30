@@ -24,6 +24,11 @@ class Cards
     Cards.new(@deck, @cards)
   end
 
+  def add(symbol, number)
+    @deck[symbol].append(number)
+    @cards.append(symbol => number)
+  end
+
   def to_a
     cards = []
     @deck.each do |symbol, numbers|
@@ -42,5 +47,15 @@ class Cards
       heart: (1..13).to_a,
       joker: [0, 0]
     }
+  end
+end
+
+class Player
+  def initialize
+    @hand = Cards.new
+  end
+
+  def add(symbol, number)
+    @hand.add(symbol, number)
   end
 end
