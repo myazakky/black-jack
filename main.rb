@@ -1,39 +1,36 @@
 # frozen_string_literal: true
 
-class Card
+class Cards
   def initialize(deck = nil, cards_array = nil)
     @deck = deck.nil? ? new_deck : deck
     @cards_array = cards_array.nil? ? deck_to_a : cards_array
   end
 
   def shuffle!
-    Card.new(@deck, @cards_array.shuffle!)
+    Cards.new(@deck, @cards_array.shuffle!)
   end
 
   def draw(any_number)
-    drawed_card = Card.new({}, [])
+    drawn_cards = Cards.new({})
     @cards_array[0, any_number].each do |card|
-      drawed_card.add(card)
+      symbol, number = card.to_a.flatten
+      drawn_cards.add(Cards.new(symbol => [number]))
 
-      symbol, number = card.to_a.flatten!
       @deck[symbol].delete(number)
     end
     @cards_array.slice!(0, any_number)
 
-    drawed_card
+    drawn_cards
   end
 
-  def add(card)
-    @cards_array.append(card)
-
-    symbol, number = card.to_a.flatten!
-    if @deck[symbol].nil?
-      @deck[symbol] = [number]
-    else
-      @deck[symbol].append(number)
+  def add(cards)
+    cards.deck_to_a.each do |card|
+      symbol, number = card.to_a.flatten
+      @deck[symbol] = @deck[symbol].nil? ? [number] : @deck[symbol].append(number)
+      @cards_array.append(card)
     end
 
-    Card.new(@deck, @cards_array)
+    Cards.new(@deck, @cards_array)
   end
 
   def deck_to_a
@@ -57,13 +54,7 @@ class Card
   end
 end
 
-class BlackJack
-  def initialize
-    @card = Card.new
-    @player = Card.new({}, [])
-    @dealer = Card.new({}, [])
-  end
-
-  def run
-  end
-end
+cards = Cards.new
+p cards.add(Cards.new(spade: [13]))
+p cards.draw(3)
+p cards
