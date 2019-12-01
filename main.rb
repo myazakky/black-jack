@@ -23,6 +23,16 @@ class Cards
     drawn_cards
   end
 
+  def take(cards)
+    cards.deck_to_a.each do |card|
+      symbol, number = card.to_a.flatten
+      @deck[symbol].delete(number)
+      @cards_array.delete(card)
+    end
+
+    Cards.new(@deck, @cards_array)
+  end
+
   def add(cards)
     cards.deck_to_a.each do |card|
       symbol, number = card.to_a.flatten
@@ -80,6 +90,7 @@ class BlackJack
     @player = Hand.new({})
     @dealer = Hand.new({})
     @cards = Cards.new
+    @cards.take(Cards.new(joker: [0, 0]))
   end
 
   def run
