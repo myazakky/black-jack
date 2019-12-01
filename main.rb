@@ -54,6 +54,9 @@ class Cards
   end
 end
 
+class Hand < Cards
+end
+
 class BlackJack
   def initialize
     @player = Cards.new({})
