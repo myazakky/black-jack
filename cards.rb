@@ -53,6 +53,14 @@ class Cards
     cards_array
   end
 
+  def deck_to_s
+    result_string = ''
+    @deck.each do |symbol, number_array|
+      number_array.each { |number| result_string = result_string + "#{symbol_to_character(symbol)}#{number} " }
+    end
+    result_string
+  end
+
   private
 
   def new_deck
@@ -63,5 +71,15 @@ class Cards
       club: (1..13).to_a,
       joker: [0, 0]
     }
+  end
+
+  def symbol_to_character(symbol)
+    case symbol
+    when :spade then '♤'
+    when :diamond then '♢'
+    when :heart then '♡'
+    when :club then '♧'
+    when :joker then '?'
+    end
   end
 end
