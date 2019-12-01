@@ -84,6 +84,15 @@ class BlackJack
 
   def run
     @cards.shuffle!
+
+    player_drew_cards = @cards.draw(2)
+    puts "You drew #{player_drew_cards.deck_to_a}\n"
+    @player.add(player_drew_cards)
+
+    dealer_drew_cards = @cards.draw(2)
+    puts "Dealer drew #{dealer_drew_cards.deck_to_a[0]}\n"
+    @dealer.add(dealer_drew_cards)
+
     while @player.total <= 21
       drawn_cards = @cards.draw(1)
       @player.add(drawn_cards)
@@ -101,7 +110,7 @@ class BlackJack
     puts <<~"EOS"
       Player: #{@player.total}
       Dealer: #{@dealer.total}
-      Winner is #{judge}"
+      Winner is #{judge}
     EOS
   end
 
