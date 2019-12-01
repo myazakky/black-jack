@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Cards
+  attr_reader :deck
+
   def initialize(deck = nil, cards_array = nil)
     @deck = deck.nil? ? new_deck : deck
     @cards_array = cards_array.nil? ? deck_to_a : cards_array
@@ -75,6 +77,12 @@ class Hand < Cards
     total_number
   end
 
+  def over?
+    total > 21
+  end
+
+  private
+
   def to_black_jack_number(number)
     case number
     when 11 then 10
@@ -104,19 +112,18 @@ class BlackJack
     puts "Dealer drew #{dealer_drew_cards.deck_to_a[0]}\n"
     @dealer.add(dealer_drew_cards)
 
-    while @player.total <= 21
+    until @player.over?
+      puts "total: #{@player.total}"
+      print 'stop? Y/n'
+      break if readline == "Y\n"
+
       drawn_cards = @cards.draw(1)
       @player.add(drawn_cards)
 
-      puts <<~"EOS"
-        You draw #{drawn_cards.deck_to_a}
-        total: #{@player.total}
-      EOS
-      print 'stop? Y/n'
-      break if readline == "Y\n"
+      puts "You draw #{drawn_cards.deck_to_a}"
     end
 
-    @dealer.add(@cards.draw(1)) while @dealer.total < 17
+    @dealer.add(@cards.draw(1)) while @dealer.total < 17 unless @player.over?
 
     puts <<~"EOS"
       Player: #{@player.total}
@@ -128,10 +135,15 @@ class BlackJack
   private
 
   def judge
-    if 21 - @dealer.total < 21 - @player.total || @player.total > 21
-      'dealer'
-    else
-      'player'
+    dealer_difference = (21 - @dealer.total).abs
+    player_difference = (21 - @player.total).abs
+
+    case true
+    when @dealer.over? then 'player'
+    when @player.over? then 'dealer'
+    when dealer_difference == player_difference then 'none'
+    when dealer_difference < player_difference then 'dealer'
+    when dealer_difference > player_difference then 'player'
     end
   end
 end
