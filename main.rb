@@ -55,51 +55,9 @@ class Cards
 end
 
 class Hand < Cards
-end
-
-class BlackJack
-  def initialize
-    @player = Cards.new({})
-    @dealer = Cards.new({})
-    @cards = Cards.new
-  end
-
-  def run
-    @cards.shuffle!
-    while total(@player) <= 21
-      drawn_cards = @cards.draw(1)
-      @player.add(drawn_cards)
-
-      puts <<~"EOS"
-        You draw #{drawn_cards.deck_to_a}
-        total: #{total(@player)}
-      EOS
-      print 'stop? Y/n'
-      break if readline == "Y\n"
-    end
-
-    @dealer.add(@cards.draw(1)) while total(@dealer) < 17
-
-    puts <<~"EOS"
-      Player: #{total(@player)}
-      Dealer: #{total(@dealer)}
-      Winner is #{judge}"
-    EOS
-  end
-
-  private
-
-  def judge
-    if 21 - total(@dealer) < 21 - total(@player) || total(@player) > 21
-      'dealer'
-    else
-      'player'
-    end
-  end
-
-  def total(cards)
+  def total
     total_number = 0
-    cards.deck_to_a.each do |card|
+    @cards_array.each do |card|
       _, number = card.to_a.flatten
       total_number += to_black_jack_number(number)
     end
@@ -113,6 +71,47 @@ class BlackJack
     when 12 then 10
     when 13 then 10
     else number
+    end
+  end
+end
+
+class BlackJack
+  def initialize
+    @player = Hand.new({})
+    @dealer = Hand.new({})
+    @cards = Cards.new
+  end
+
+  def run
+    @cards.shuffle!
+    while @player.total <= 21
+      drawn_cards = @cards.draw(1)
+      @player.add(drawn_cards)
+
+      puts <<~"EOS"
+        You draw #{drawn_cards.deck_to_a}
+        total: #{@player.total}
+      EOS
+      print 'stop? Y/n'
+      break if readline == "Y\n"
+    end
+
+    @dealer.add(@cards.draw(1)) while @dealer.total < 17
+
+    puts <<~"EOS"
+      Player: #{@player.total}
+      Dealer: #{@dealer.total}
+      Winner is #{judge}"
+    EOS
+  end
+
+  private
+
+  def judge
+    if 21 - @dealer.total < 21 - @player.total || @player.total > 21
+      'dealer'
+    else
+      'player'
     end
   end
 end
